@@ -157,19 +157,20 @@ void pid() {
     cada vez más altos sin llegar a ninguna parte. Una vez que se alcanza cualquiera de los límites, el pid deja de sumar (integrar) y se lleva a 0.
     */
     ITerm += (Ki * error) * 0.1;
+    if (ITerm > maxLimit) ITerm = outMax;
+    else if (ITerm < minLimit) ITerm = outMin;
 
     double dInput = (Input - lastInput) / 0.1;
 
     /*Compute PID Output*/
-    Output = Kp * error + Ki * errSum + Kd * dInput;
-    if (Output > maxLimit)
-      ITerm -= Output – maxLimit;
+    Output = Kp * error + Ki * errSum - Kd * dInput;
+    if (Output > maxLimit){
+      
       Output = maxLimit;
-    else if (Output < minLimit)
-      ITerm += minLimit – Output;
+    }else if (Output < minLimit){
+      
       Output = minLimit;
-    if (ITerm > maxLimit) ITerm = outMax;
-    else if (ITerm < minLimit) ITerm = outMin;
+    }
     // la entrada es menor al setpoint entonces el motor funcionara por pwm si es superior se apaga.
     //debido a que la señal entre 0 y 60 no tiene la suficiente corriente para que el motor gire.
     if (Input < Setpoint) {
